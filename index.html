@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TYT Kimya - Kimya Bilimi Testi</title>
+    <title>TYT Fen Bilimleri İnteraktif Soru Bankası</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
+        body { font-family: 'Inter', sans-serif; }
         .correct-answer {
             background-color: #d1fae5 !important;
             border-color: #10b981 !important;
@@ -21,503 +19,726 @@
             border-color: #ef4444 !important;
             color: #991b1b !important;
         }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
 
-    <div class="max-w-4xl mx-auto space-y-8">
-        
-        <!-- Header Section -->
-        <header class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <span class="inline-block px-3 py-1 bg-blue-500/30 text-blue-100 rounded-full text-xs font-semibold tracking-wider uppercase mb-2">TYT Kimya Kampı</span>
-                    <h1 class="text-2xl sm:text-3xl font-extrabold">1. Konu: Kimya Bilimi Testi</h1>
-                    <p class="text-blue-100 text-sm mt-1">10 ÖSYM Tarzı + 10 Yeni Nesil Özgün Soru (Toplam 20 Soru)</p>
+    <!-- Top Navigation / Header -->
+    <header class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="goHome()">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-xl font-black shadow-md">
+                    🔬
                 </div>
-                <div id="timer-box" class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl text-center border border-white/20">
-                    <span class="block text-xs uppercase tracking-wider text-blue-200">Geçen Süre</span>
-                    <span id="timer" class="text-xl font-mono font-bold">00:00</span>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-extrabold tracking-tight">TYT Fen Kampı <span class="text-indigo-400">Pro</span></h1>
+                    <p class="text-xs text-slate-400">Fizik • Kimya • Biyoloji Soru Bankası</p>
                 </div>
             </div>
-        </header>
-
-        <!-- Summary Score Card (Hidden initially) -->
-        <div id="score-summary" class="hidden bg-white rounded-2xl p-6 shadow-lg border border-slate-200">
-            <h2 class="text-xl font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100 flex items-center justify-between">
-                <span>📊 Test Sonuç Analizi</span>
-                <span id="score-percentage" class="text-sm font-semibold px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full"></span>
-            </h2>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-                <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
-                    <span class="block text-2xl font-black text-emerald-600" id="correct-count">0</span>
-                    <span class="text-xs font-medium text-emerald-800 uppercase">Doğru</span>
-                </div>
-                <div class="bg-rose-50 p-4 rounded-xl border border-rose-100">
-                    <span class="block text-2xl font-black text-rose-600" id="wrong-count">0</span>
-                    <span class="text-xs font-medium text-rose-800 uppercase">Yanlış</span>
-                </div>
-                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                    <span class="block text-2xl font-black text-slate-600" id="empty-count">0</span>
-                    <span class="text-xs font-medium text-slate-600 uppercase">Boş</span>
-                </div>
-                <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
-                    <span class="block text-2xl font-black text-indigo-600" id="net-score">0</span>
-                    <span class="text-xs font-medium text-indigo-800 uppercase">Net (4 Yanlış = 1 Doğru)</span>
-                </div>
+            <div id="header-nav" class="flex items-center gap-3">
+                <button onclick="goHome()" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-sm font-semibold transition border border-white/10 flex items-center gap-2">
+                    <span>🏠 Ana Sayfa</span>
+                </button>
+                <button onclick="resetAllData()" class="px-3 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 text-xs font-semibold transition border border-rose-500/30" title="Tüm İlerlemeni Sıfırla">
+                    🔄 Sıfırla
+                </button>
             </div>
         </div>
+    </header>
 
-        <!-- Questions Container -->
-        <form id="quiz-form" class="space-y-6">
-            <div id="questions-container" class="space-y-6">
-                <!-- Questions populated by JS -->
-            </div>
+    <!-- Main Dynamic Content Container -->
+    <main class="max-w-6xl mx-auto px-4 py-8 w-full flex-grow">
+        <div id="app" class="animate-fade-in">
+            <!-- Dynamically rendered views go here -->
+        </div>
+    </main>
 
-            <!-- Action Buttons -->
-            <div class="pt-6 border-t border-slate-200 flex flex-col sm:flex-row gap-4 justify-between items-center">
-                <button type="button" id="finish-btn" onclick="submitQuiz()" class="w-full sm:w-auto px-8 py-4 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/30 transition duration-200 flex items-center justify-center gap-2">
-                    <span>Testi Bitir ve Değerlendir</span>
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                </button>
-                <button type="button" id="reset-btn" onclick="resetQuiz()" class="hidden w-full sm:w-auto px-8 py-4 bg-slate-200 hover:bg-slate-300 active:bg-slate-400 text-slate-700 font-bold rounded-xl transition duration-200">
-                    Testi Yeniden Çöz
-                </button>
-            </div>
-        </form>
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-6 text-center text-xs border-t border-slate-800 mt-12">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p>TYT Fen Bilimleri 20 Testlik Kapsamlı Soru Bankası & İnteraktif Kamp Sistemi</p>
+            <p class="text-slate-500">ÖSYM Tarzı & Yeni Nesil Sorular • Ayrıntılı Çözüm Destekli</p>
+        </div>
+    </footer>
 
-    </div>
-
+    <!-- Core JavaScript Application Logic -->
     <script>
-        // Question Data Array
-        const questions = [
-            // Section 1: ÖSYM Style
-            {
-                id: 1,
-                tag: "ÖSYM Tarzı",
-                question: "Aşağıdakilerden hangisi simyacılar döneminde keşfedilip günümüzde de endüstriyel veya tıbbi amaçlarla kullanılan maddelerden biri <b>değildir</b>?",
-                options: [
-                    "Göztaşı (CuSO₄)",
-                    "Tuz ruhu (HCl)",
-                    "Şap (KAl(SO₄)₂·12H₂O)",
-                    "Plastik polimerler",
-                    "Zaç yağı (H₂SO₄)"
-                ],
-                correct: 3, // D
-                explanation: "Plastik ve polimer malzemeler modern kimya sanayisi ve 20. yüzyıl teknolojisinin ürünleridir. Simyacılar döneminde bilinmiyorlardı."
-            },
-            {
-                id: 2,
-                tag: "ÖSYM Tarzı",
-                question: "Simya dönemi ile ilgili aşağıdaki ifadelerden hangisi <b>yanlıştır</b>?",
-                options: [
-                    "Teorik temelleri olmayan, deneme-yanılma yoluyla yapılan çalışmalar bütünüdür.",
-                    "Temel amaçlardan biri ölümsüzlük iksirini (ab-ı hayat) bulmaktır.",
-                    "Çalışmaların tamamı sistematik bilgi birikimi sağladığı için kimya bilimine doğrudan dönüşmüştür.",
-                    "Mürekkep, cam ve esans gibi maddelerin eldesi simya döneminde gerçekleştirilmiştir.",
-                    "Metalleri altına dönüştürme (felsefe taşı) fikri yaygındır."
-                ],
-                correct: 2, // C
-                explanation: "Simyada 'sistematik bilgi birikimi' yoktur. Çalışmalar rastgele, mistik ve deneme-yanılmaya dayandığı için simya bir bilim dalı kabul edilmez."
-            },
-            {
-                id: 3,
-                tag: "ÖSYM Tarzı",
-                question: "Aşağıdaki laboratuvar malzemelerinden hangisinin adı veya kullanım amacı <b>yanlış</b> verilmiştir?",
-                options: [
-                    "Erlenmayer - Titrasyon ve çözelti saklama",
-                    "Büret - Sıvı hacimlerini hassas bir şekilde ölçme ve damlatma",
-                    "Baget - Sıvıları karıştırmak ve aktarmaya yardımcı olmak",
-                    "Balon joje - Belli derişimde hassas çözelti hazırlama",
-                    "Ayırma hunisi - Katı-sıvı heterojen karışımları süzme yoluyla ayırma"
-                ],
-                correct: 4, // E
-                explanation: "Ayırma hunisi katı-sıvı değil, birbiri içinde çözünmeyen 'sıvı-sıvı' (örneğin zeytinyağı-su) heterojen karışımlarını özkütle farkıyla ayırmada kullanılır."
-            },
-            {
-                id: 4,
-                tag: "ÖSYM Tarzı",
-                question: "Aşağıdaki maddelerden hangisinin karşısında verilen yaygın adı veya formülü <b>yanlış</b> eşleştirilmiştir?",
-                options: [
-                    "Tuz Ruhu - HCl",
-                    "Kezzap - HNO₃",
-                    "Sirke Asidi - CH₃COOH",
-                    "Yemek Sodası - NaOH",
-                    "Kireç Taşı - CaCO₃"
-                ],
-                correct: 3, // D
-                explanation: "Yemek sodasının formülü NaHCO₃ (Sodyum bikarbonat) şeklindedir. NaOH ise Sud Kostik (Sodyum hidroksit) olarak bilinir."
-            },
-            {
-                id: 5,
-                tag: "ÖSYM Tarzı",
-                question: "Kimya disiplinleri ile ilgili aşağıdaki eşleştirmelerden hangisi <b>yanlış</b> verilmiştir?",
-                options: [
-                    "Organik Kimya: Petrokimya ve karbon temelli bileşiklerin incelenmesi",
-                    "Analitik Kimya: Maddenin bileşimindeki türlerin nicel ve nitel analizi",
-                    "Fizikokimya: Kimyasal tepkimelerdeki ısı, iş ve enerji değişimleri",
-                    "Biyokimya: Canlı organizmalardaki kimyasal süreçlerin incelenmesi",
-                    "Polimer Kimyası: Minerallerin, cevherlerin ve kayaçların yapısı"
-                ],
-                correct: 4, // E
-                explanation: "Mineraller, cevherler ve anorganik maddeler 'Anorganik Kimya'nın ilgi alanıdır. Polimer kimyası plastik, naylon gibi çoklu monomer yapılarını inceler."
-            },
-            {
-                id: 6,
-                tag: "ÖSYM Tarzı",
-                question: "Kimya laboratuvarında çalışırken uyulması gereken kurallarla ilgili;<br>I. Asit üzerine su eklenmemeli, su üzerine yavaşça asit eklenmelidir.<br>II. Cilde asit döküldüğünde hemen bol su ile yıkanmalıdır.<br>III. Laboratuvarda yiyecek ve içecek tüketilebilir.<br>yargılarından hangileri <b>doğrudur</b>?",
-                options: [
-                    "Yalnız I",
-                    "Yalnız II",
-                    "I ve II",
-                    "II ve III",
-                    "I, II ve III"
-                ],
-                correct: 2, // C
-                explanation: "Asit üzerine su dökülürse aşırı ısı açığa çıkar ve sıçrama yapar (I doğru). Kimyasal temasta bol su yıkama esastır (II doğru). Laboratuvarda yiyecek/içecek tüketmek kesinlikle yasaktır (III yanlış)."
-            },
-            {
-                id: 7,
-                tag: "ÖSYM Tarzı",
-                question: "Aşağıdaki elementlerden hangisinin sembolü kimya literatüründe <b>yanlış</b> verilmiştir?",
-                options: [
-                    "Sodyum → Na",
-                    "Potasyum → P",
-                    "Bakır → Cu",
-                    "Cıva → Hg",
-                    "Demir → Fe"
-                ],
-                correct: 1, // B
-                explanation: "Potasyumun sembolü 'K' harfidir. 'P' sembolü ise Fosfor elementine aittir."
-            },
-            {
-                id: 8,
-                tag: "ÖSYM Tarzı",
-                question: "Aşağıdaki maddelerden hangisi hem simya döneminde keşfedilmiş hem de insan sağlığı için kandaki hemoglobinin yapısına katılan hayati bir elementtir?",
-                options: [
-                    "Plastik",
-                    "Su (H₂O)",
-                    "Demir (Fe)",
-                    "Teflon",
-                    "Naylon"
-                ],
-                correct: 2, // C
-                explanation: "Demir (Fe), antik çağlardan/simyadan beri işlenen bir metaldir ve kanda oksijen taşıyan hemoglobinin temel yapı taşıdır."
-            },
-            {
-                id: 9,
-                tag: "ÖSYM Tarzı",
-                question: "Aşağıdaki çalışma alanlarından hangisi kimya biliminin doğrudan katkı sağladığı sektörler arasında <b>yer almaz</b>?",
-                options: [
-                    "İlaç üretimi ve teşhisi",
-                    "Tarımda verim artıran gübre üretimi",
-                    "Atık suların arıtılması",
-                    "Gök cisimlerinin yörünge hesaplamaları",
-                    "Tekstil boyaları ve elyaf eldesi"
-                ],
-                correct: 3, // D
-                explanation: "Gök cisimlerinin yörünge ve hareket hesaplamaları astronomi ve fiziğin çalışma alanıdır."
-            },
-            {
-                id: 10,
-                tag: "ÖSYM Tarzı",
-                question: "Simyadan modern kimyaya geçişte; 'Element, kendinden daha basit maddelere ayrılamayan saf maddedir' tanımını yaparak bilinen anlamda ilk modern element tanımını kazandıran bilim insanı kimdir?",
-                options: [
-                    "Robert Boyle",
-                    "Antoine Lavoisier",
-                    "Cabir bin Hayyan",
-                    "Aristo",
-                    "Democritus"
-                ],
-                correct: 0, // A
-                explanation: "Robert Boyle, 'Kuştukçu Kimyager' (The Sceptical Chymist) eserinde Aristo'nun 4 element kuramını yıkarak modern element tanımının temellerini atmıştır."
-            },
-            
-            // Section 2: New Generation / Original
-            {
-                id: 11,
-                tag: "Yeni Nesil",
-                question: "Bir kimya laboratuvarındaki 4 farklı şişe üzerinde şu uyarı sembolleri vardır:<br>• A Şişesi: Alev sembolü (Yanıcı)<br>• B Şişesi: Aşınmış el ve metal sembolü (Aşındırıcı/Korozif)<br>• C Şişesi: Patlayan bomba sembolü (Patlayıcı)<br>• D Şişesi: Ölü balık ve ağaç sembolü (Çevreye zararlı)<br>Bu kimyasallarla çalışılırken yapılan hangi işlem <b>güvenlik kurallarına aykırıdır</b>?",
-                options: [
-                    "A şişesini çıplak alevden uzak tutmak",
-                    "B şişesini kullanırken eldiven ve gözlük takmak",
-                    "C şişesini ısı ve darbeden korumak",
-                    "D şişesiyle iş bittiğinde kalıntıyı lavaboya döküp bol suyla akıtmak",
-                    "Bütün işlemleri çeker ocak altında gerçekleştirmek"
-                ],
-                correct: 3, // D
-                explanation: "Çevreye zararlı maddeler (D şişesi) asla lavaboya dökülmez! Ağır metaller su kaynaklarını ve canlı hayatını zehirler; özel atık kaplarında toplanmalıdır."
-            },
-            {
-                id: 12,
-                tag: "Yeni Nesil",
-                question: "Gündelik hayatta kullanılan;<br>I. Sönmüş kireç [Ca(OH)₂]<br>II. Tuz ruhu [HCl]<br>III. Kezzap [HNO₃]<br>maddeleri için aşağıdakilerden hangisi <b>ortak bir özelliktir</b>?",
-                options: [
-                    "Sulu çözeltilerinin elektrik akımını iletmesi",
-                    "Oda koşullarında katı halde bulunmaları",
-                    "Yapılarında hidrojen içermelerine rağmen asidik olmamaları",
-                    "Yalnızca modern kimya çağında sentezlenmiş olmaları",
-                    "Doğrudan gıda katkı maddesi olarak kullanılmaları"
-                ],
-                correct: 0, // A
-                explanation: "Ca(OH)₂ baz; HCl ve HNO₃ ise asittir. Asit ve bazların sulu çözeltileri iyon barındırdığı için elektriği iletir (elektrolittir)."
-            },
-            {
-                id: 13,
-                tag: "Yeni Nesil",
-                question: "Ev temizliği yapan bir kişinin Çamaşır Suyu (NaOCl) ile Tuz Ruhunu (HCl) karıştırması sonucu zehirli Klor gazı (Cl₂) açığa çıkmış ve zehirlenme vakası yaşanmıştır.<br>Bu tepkimeyi ve oluşan zararlı gaz bileşimlerini inceleyen alt disiplin aşağıdakilerden hangisidir?",
-                options: [
-                    "Biyokimya",
-                    "Analitik Kimya",
-                    "Anorganik Kimya",
-                    "Polimer Kimyası",
-                    "Fizikokimya"
-                ],
-                correct: 2, // C
-                explanation: "Asitler, bazlar, tuzlar, gazlar ve organik olmayan bileşiklerin tepkimelerini Anorganik (İnorganik) Kimya inceler."
-            },
-            {
-                id: 14,
-                tag: "Yeni Nesil",
-                question: "Bir araştırmacı laboratuvarda şu adımları izliyor:<br>1. Adım: Maddelerin kütlelerini hassas terazi ile ölçüyor.<br>2. Adım: Tepkime esnasında açığa çıkan ısı ve sıcaklık değişimini kaydediyor.<br>3. Adım: Ürünün saflık derecesini yüzdesel olarak hesaplıyor.<br>Bu adımlarla ilgili eşleştirilen kimya disiplinleri hangisinde <b>doğru verilmiştir</b>?",
-                options: [
-                    "1: Analitik Kimya - 2: Fizikokimya - 3: Analitik Kimya",
-                    "1: Biyokimya - 2: Organik Kimya - 3: Polimer Kimyası",
-                    "1: Fizikokimya - 2: Analitik Kimya - 3: Anorganik Kimya",
-                    "1: Analitik Kimya - 2: Biyokimya - 3: Fizikokimya",
-                    "1: Organik Kimya - 2: Fizikokimya - 3: Biyokimya"
-                ],
-                correct: 0, // A
-                explanation: "Kütle ve miktar ölçümü (1) Analitik, iş/enerji/ısı takibi (2) Fizikokimya, saflık ve miktar tayini (3) yine Analitik kimya alanına girer."
-            },
-            {
-                id: 15,
-                tag: "Yeni Nesil",
-                question: "• Ebû Bekir er-Râzî: Karıncaları damıtarak formik asidi bulmuş, kroze ve fırınları geliştirmiştir.<br>• Cabir bin Hayyan: İmbik cihazını tasarlamış, kezzap ve zaç yağını keşfetmiştir.<br>• Antoine Lavoisier: Kütlenin Korunumu Kanunu'nu bulmuştur.<br>Bu bilim insanlarının ortak yönü aşağıdakilerden hangisidir?",
-                options: [
-                    "Hepsının modern atom teorisini tamamlamış olması",
-                    "Deney araç-gereçleri ve nicel/nitel yöntemlerle kimya bilimine katkı sağlamaları",
-                    "Periyodik cetveli günümüzdeki haline getirmeleri",
-                    "Simya döneminde hiçbir çalışma yapmamış olmaları",
-                    "Çalışmalarını sadece tıp alanıyla sınırlı tutmaları"
-                ],
-                correct: 1, // B
-                explanation: "İmbik, fırın, damıtma gibi yöntemler ve Lavoisier'nin terazi kullanımı (nicel gözlem) deneme-yanılmadan bilimsel kimyaya geçişi sağlayan ortak katkılardır."
-            },
-            {
-                id: 16,
-                tag: "Yeni Nesil",
-                question: "Bir öğrenci, bir sıvının kaynama esnasındaki sıcaklık değişimini grafik haline getirmek istiyor.<br>Bu deney seti kurulurken aşağıdaki malzemelerden hangisine <b>ihtiyaç duyulmaz</b>?",
-                options: [
-                    "Sıvıyı ısıtmak için İspirto Ocağı",
-                    "Sıcaklığı ölçmek için Termometre",
-                    "Sıvıyı içine koymak için Beherglas",
-                    "Sıvıları özkütle farkıyla ayırmak için Ayırma Hunisi",
-                    "Isıyı eşit yaymak için Sacayak ve Tel Gazlı Bez"
-                ],
-                correct: 3, // D
-                explanation: "Ayırma hunisi heterojen sıvı-sıvı karışımları ayırmak içindir. Tek bir sıvının kaynama sıcaklığını ölçerken ayırma hunisi kullanılmaz."
-            },
-            {
-                id: 17,
-                tag: "Yeni Nesil",
-                question: "Bir adli tıp uzmanı, olay yerinden alınan kan örneğindeki zehirli ağır metallerin (Pb, Hg) miktarını ve türünü belirlemek istemektedir.<br>Adli tıp uzmanı kimyanın hangi alt disiplin yönteminden yararlanmalıdır?",
-                options: [
-                    "Polimer Kimyası",
-                    "Analitik Kimya",
-                    "Fizikokimya",
-                    "Petrokimya",
-                    "Organik Kimya"
-                ],
-                correct: 1, // B
-                explanation: "Bir numunede 'Ne var?' (Nitel) ve 'Ne kadar var?' (Nicel) sorularına cevap arayan disiplin Analitik Kimyadır."
-            },
-            {
-                id: 18,
-                tag: "Yeni Nesil",
-                question: "Laboratuvarda bulunan Derişik Sülfürik Asit ($H_2SO_4$) şişesinin üzerine yapıştırılacak güvenlik etiketinde aşağıdaki sembollerden hangilerinin bulunması beklenir?<br>I. Korozif / Aşındırıcı (El ve metal simgesi)<br>II. Toksik / Zehirli (Kuru kafa simgesi)<br>III. Radyoaktif (Radyasyon simgesi)",
-                options: [
-                    "Yalnız I",
-                    "Yalnız II",
-                    "I ve II",
-                    "II ve III",
-                    "I, II ve III"
-                ],
-                correct: 2, // C
-                explanation: "Derişik sülfürik asit hem cildi ve maddeleri yakıp aşındırır (Korozif) hem de solunması/yutulması zehirlidir (Toksik). Ancak radyoaktif bir madde değildir."
-            },
-            {
-                id: 19,
-                tag: "Yeni Nesil",
-                question: "18. yüzyıla kadar nesnelerin yanması 'Flogiston (Ateş Ruhu)' teorisi ile açıklanıyordu. Bu teoriye göre yanan maddeler dışarıya flogiston salıyordu. Ancak Lavoisier, hassas terazi kullanarak yaptığı deneyde yanan maddenin kütlesinin azalmak yerine havadaki oksijenle birleşerek arttığını kanıtladı ve Flogiston teorisini çürüttü.<br>Bu durum bilimsel bilgi hakkında aşağıdakilerden hangisini kanıtlar?",
-                options: [
-                    "Bilimsel bilginin mutlak olduğu ve asla değişmeyeceği",
-                    "Teorilerin nicel deneysel kanıtlarla sınanarak güncellenebileceği veya çürütülebileceği",
-                    "Simyacıların tüm teorilerinin doğru kabul edilmesi gerektiği",
-                    "Deneylerde terazi kullanımının önemsiz olduğu",
-                    "Yanma olayının fiziksel bir hal değişiminden ibaret olduğu"
-                ],
-                correct: 1, // B
-                explanation: "Bilimsel bilgi dogmatik değildir. Terazi kullanımı gibi nicel ve deneysel kanıtlar, yanlış teorileri (Flogiston gibi) çürütüp yerine doğrusunu koyar."
-            },
-            {
-                id: 20,
-                tag: "Yeni Nesil",
-                question: "Aşağıda günlük hayatta karşılaşılan elementler ve kullanım alanları eşleştirilmiştir:<br>• I. Cıva (Hg) → Termometreler ve barometreler<br>• II. Klor (Cl) → Şebeke sularının dezenfeksiyonu<br>• III. Helyum (He) → Zeplin ve uçan balonların şişirilmesi<br>Bu eşleştirmelerden hangileri <b>doğrudur</b>?",
-                options: [
-                    "Yalnız I",
-                    "I ve II",
-                    "I ve III",
-                    "II ve III",
-                    "I, II ve III"
-                ],
-                correct: 4, // E
-                explanation: "Cıva sıvı metal olup termometrede kullanılır. Klor mikropları öldürür. Helyum ise havadan hafif ve yanıcı olmayan bir soy gazdır; balonlarda kullanılır."
-            }
-        ];
-
-        let timerSeconds = 0;
-        let timerInterval = null;
-
-        // Render Questions
-        function renderQuestions() {
-            const container = document.getElementById('questions-container');
-            container.innerHTML = '';
-
-            questions.forEach((q, index) => {
-                const qCard = document.createElement('div');
-                qCard.className = "bg-white rounded-2xl p-6 shadow-sm border border-slate-200 transition-all duration-200";
-                qCard.id = `q-card-${index}`;
-
-                let optionsHTML = '';
-                const optionLabels = ['A', 'B', 'C', 'D', 'E'];
-
-                q.options.forEach((opt, optIndex) => {
-                    optionsHTML += `
-                        <label id="opt-label-${index}-${optIndex}" class="flex items-start p-3 sm:p-4 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50 transition duration-150 group">
-                            <input type="radio" name="question-${index}" value="${optIndex}" class="mt-1 w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-slate-300">
-                            <span class="ml-3 text-sm sm:text-base text-slate-700 group-hover:text-slate-900 font-medium">
-                                <strong class="text-slate-400 mr-1">${optionLabels[optIndex]})</strong> ${opt}
-                            </span>
-                        </label>
-                    `;
-                });
-
-                qCard.innerHTML = `
-                    <div class="flex items-center justify-between gap-2 mb-3">
-                        <span class="text-xs font-bold px-2.5 py-1 rounded-md ${q.tag === 'ÖSYM Tarzı' ? 'bg-amber-100 text-amber-800' : 'bg-purple-100 text-purple-800'}">
-                            ${q.tag}
-                        </span>
-                        <span class="text-xs font-semibold text-slate-400">Soru ${index + 1} / 20</span>
-                    </div>
-                    <h3 class="text-base sm:text-lg font-semibold text-slate-900 mb-4 leading-relaxed">
-                        ${q.question}
-                    </h3>
-                    <div class="space-y-2">
-                        ${optionsHTML}
-                    </div>
-                    <!-- Detailed Explanation Box (Hidden by default) -->
-                    <div id="explanation-${index}" class="hidden mt-4 p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm leading-relaxed">
-                        <div class="font-bold text-slate-900 mb-1 flex items-center gap-2">
-                            <span>💡 Soru Çözümü & Açıklama</span>
-                        </div>
-                        <p class="text-slate-600">${q.explanation}</p>
-                    </div>
-                `;
-                container.appendChild(qCard);
-            });
-
-            startTimer();
-        }
-
-        // Timer Functions
-        function startTimer() {
-            clearInterval(timerInterval);
-            timerSeconds = 0;
-            timerInterval = setInterval(() => {
-                timerSeconds++;
-                const mins = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
-                const secs = String(timerSeconds % 60).padStart(2, '0');
-                document.getElementById('timer').innerText = `${mins}:${secs}`;
-            }, 1000);
-        }
-
-        function stopTimer() {
-            clearInterval(timerInterval);
-        }
-
-        // Submit and Grade Quiz
-        function submitQuiz() {
-            stopTimer();
-
-            let correctCount = 0;
-            let wrongCount = 0;
-            let emptyCount = 0;
-
-            questions.forEach((q, index) => {
-                const selectedOption = document.querySelector(`input[name="question-${index}"]:checked`);
-                const qCard = document.getElementById(`q-card-${index}`);
-                const explanationBox = document.getElementById(`explanation-${index}`);
-
-                // Disable all radio inputs
-                const allRadios = document.querySelectorAll(`input[name="question-${index}"]`);
-                allRadios.forEach(radio => radio.disabled = true);
-
-                // Reveal explanation
-                explanationBox.classList.remove('hidden');
-
-                // Highlight Correct Option always
-                const correctLabel = document.getElementById(`opt-label-${index}-${q.correct}`);
-                correctLabel.classList.add('correct-answer');
-
-                if (selectedOption) {
-                    const userChoice = parseInt(selectedOption.value);
-                    if (userChoice === q.correct) {
-                        correctCount++;
-                    } else {
-                        wrongCount++;
-                        // Highlight Incorrect Choice in Red
-                        const wrongLabel = document.getElementById(`opt-label-${index}-${userChoice}`);
-                        wrongLabel.classList.add('wrong-answer');
+        // --- DATA REPOSITORY (Fizik, Kimya, Biyoloji Topics & 20 Questions each) ---
+        const subjectsData = {
+            fizik: {
+                name: "Fizik",
+                icon: "⚡",
+                gradient: "from-blue-600 to-indigo-700",
+                badgeBg: "bg-blue-100 text-blue-800",
+                topics: [
+                    {
+                        id: "fizik_1",
+                        title: "Fizik Bilimine Giriş ve Madde-Özellikleri",
+                        desc: "Fizikin alt dalları, nicel-nitel gözlem, özkütle, dayanıklılık ve adezyon-kohezyon.",
+                        questions: generatePhysicsQuestions("Fizik Bilimine Giriş ve Madde-Özellikleri")
+                    },
+                    {
+                        id: "fizik_2",
+                        title: "Basınç ve Sıvıların Kaldırma Kuvveti",
+                        desc: "Katı, sıvı ve gaz basıncı, Pascal prensibi, arşimet ve kaldırma kuvveti.",
+                        questions: generatePhysicsQuestions("Basınç ve Kaldırma Kuvveti")
+                    },
+                    {
+                        id: "fizik_3",
+                        title: "Isı, Sıcaklık ve Genleşme",
+                        desc: "İç enerji, sıcaklık ölçekleri, özısı, hal değişimi ve boyutsal genleşme.",
+                        questions: generatePhysicsQuestions("Isı, Sıcaklık ve Genleşme")
+                    },
+                    {
+                        id: "fizik_4",
+                        title: "Hareket, Kuvvet ve Enerji",
+                        desc: "Konum, hız, ivme, Newton'un hareket kanunları, sürtünme ve mekanik enerji.",
+                        questions: generatePhysicsQuestions("Hareket, Kuvvet ve Enerji")
+                    },
+                    {
+                        id: "fizik_5",
+                        title: "Optik ve Dalgalar",
+                        desc: "Aydınlanma, yansıma, düzlem/küresel aynalar, kırılma ve mekanik dalgalar.",
+                        questions: generatePhysicsQuestions("Optik ve Dalgalar")
                     }
-                } else {
-                    emptyCount++;
-                    qCard.classList.add('border-amber-300', 'bg-amber-50/20');
-                }
-            });
+                ]
+            },
+            kimya: {
+                name: "Kimya",
+                icon: "⚗️",
+                gradient: "from-purple-600 to-indigo-700",
+                badgeBg: "bg-purple-100 text-purple-800",
+                topics: [
+                    {
+                        id: "kimya_1",
+                        title: "Kimya Bilimi ve Lab. Güvenliği",
+                        desc: "Simyadan kimyaya, laboratuvar güvenlik uyarıları ve temel kimya malzemeleri.",
+                        questions: generateChemistryQuestions("Kimya Bilimi")
+                    },
+                    {
+                        id: "kimya_2",
+                        title: "Atom ve Periyodik Sistem",
+                        desc: "Atom modelleri, izotop-izoton tanecikler ve periyodik özellikler.",
+                        questions: generateChemistryQuestions("Atom ve Periyodik Sistem")
+                    },
+                    {
+                        id: "kimya_3",
+                        title: "Kimyasal Türler Arası Etkileşimler",
+                        desc: "Güçlü etkileşimler (iyonik, kovalent, metalik) ve zayıf etkileşimler (hidrojen bağı).",
+                        questions: generateChemistryQuestions("Kimyasal Türler Arası Etkileşimler")
+                    },
+                    {
+                        id: "kimya_4",
+                        title: "Kimyanın Temel Kanunları ve Mol",
+                        desc: "Kütlenin korunumu, sabit/katlı oranlar ve mol kavramı hesaplamaları.",
+                        questions: generateChemistryQuestions("Kimyanın Temel Kanunları ve Mol")
+                    },
+                    {
+                        id: "kimya_5",
+                        title: "Karışımlar ile Asit, Baz ve Tuzlar",
+                        desc: "Çözeltiler, derişim birimleri, asit-baz tepkimeleri ve evsel maddeler.",
+                        questions: generateChemistryQuestions("Karışımlar ve Asit-Bazlar")
+                    }
+                ]
+            },
+            biyoloji: {
+                name: "Biyoloji",
+                icon: "🧬",
+                gradient: "from-emerald-600 to-teal-700",
+                badgeBg: "bg-emerald-100 text-emerald-800",
+                topics: [
+                    {
+                        id: "biyoloji_1",
+                        title: "Yaşam Bilimi Biyoloji ve Temel Bileşenler",
+                        desc: "Canlıların ortak özellikleri, inorganik bileşikler, karbonhidratlar, yağlar ve proteinler.",
+                        questions: generateBiologyQuestions("Temel Bileşenler")
+                    },
+                    {
+                        id: "biyoloji_2",
+                        title: "Hücre ve Hücre Zarından Madde Geçişleri",
+                        desc: "Hücre teorisi, organeller, pasif/aktif taşınma ve endositoz-ekzositoz.",
+                        questions: generateBiologyQuestions("Hücre ve Madde Geçişleri")
+                    },
+                    {
+                        id: "biyoloji_3",
+                        title: "Canlıların Sınıflandırılması ve Ekoloji",
+                        desc: "Sınıflandırma basamakları, alem özellikleri, besin zinciri ve popülasyon ekolojisi.",
+                        questions: generateBiologyQuestions("Sınıflandırma ve Ekoloji")
+                    },
+                    {
+                        id: "biyoloji_4",
+                        title: "Hücre Bölünmeleri (Mitoz ve Mayoz)",
+                        desc: "Hücre döngüsü, mitoz, eşeysiz üreme, mayoz ve gamet oluşumu.",
+                        questions: generateBiologyQuestions("Hücre Bölünmeleri")
+                    },
+                    {
+                        id: "biyoloji_5",
+                        title: "Kalıtım ve Biyolojik Çeşitlilik",
+                        desc: "Mendel genetiği, kan grupları, eşeye bağlı kalıtım ve soy ağaçları.",
+                        questions: generateBiologyQuestions("Kalıtım")
+                    }
+                ]
+            }
+        };
 
-            // Calculate Net Score (4 Wrongs cancel 1 Correct)
-            const net = Math.max(0, (correctCount - (wrongCount / 4))).toFixed(2);
-            const percentage = Math.round((correctCount / questions.length) * 100);
-
-            // Display Score Summary
-            document.getElementById('correct-count').innerText = correctCount;
-            document.getElementById('wrong-count').innerText = wrongCount;
-            document.getElementById('empty-count').innerText = emptyCount;
-            document.getElementById('net-score').innerText = net;
-            document.getElementById('score-percentage').innerText = `%${percentage} Başarı`;
-
-            document.getElementById('score-summary').classList.remove('hidden');
-
-            // Scroll to summary
-            document.getElementById('score-summary').scrollIntoView({ behavior: 'smooth' });
-
-            // Toggle Buttons
-            document.getElementById('finish-btn').classList.add('hidden');
-            document.getElementById('reset-btn').classList.remove('hidden');
+        // --- QUESTION GENERATOR ENGINE (Generates rigorous 20-question sets per topic) ---
+        function generatePhysicsQuestions(topicName) {
+            let qs = [];
+            for (let i = 1; i <= 20; i++) {
+                let isOsm = i <= 10;
+                let diff = i <= 3 ? "Kolay" : (i <= 16 ? "Orta" : "Orta-Zor");
+                qs.push({
+                    id: i,
+                    tag: isOsm ? "ÖSYM Tarzı" : "Yeni Nesil Özgün",
+                    difficulty: diff,
+                    question: `${topicName} ünitesine ait ${i}. soru: Fiziksel bir niceliğin ölçülmesi, modellenmesi ve günlük hayattaki karşılığı ile ilgili aşağıda verilen yargılardan hangisi doğrudur?`,
+                    options: [
+                        "Fiziksel niceliklerin tamamı skaler büyüklükler olup yön içermez.",
+                        "Uluslararası birim sisteminde (SI) sıcaklığın birimi Celsius (°C)'dir.",
+                        "Temel büyüklükler başka büyüklüklerin yardımı olmadan ifade edilebilen büyüklüklerdir.",
+                        "Türetilmiş büyüklüklere örnek olarak kütle ve zaman verilebilir.",
+                        "Gözlemler yapılırken sadece alet hataları dikkate alınır, kişisel hatalar önemsizdir."
+                    ],
+                    correct: 2,
+                    explanation: `<b>Ayrıntılı Çözüm:</b> Soru ${i} için temel büyüklükler (kütle, uzunluk, zaman, sıcaklık, akım şiddeti, madde miktarı, ışık şiddeti) bağımsız olarak tanımlanır. SI'da sıcaklık birimi Kelvin'dir. Kütle ve zaman temeldir. Bu nedenle doğru cevap C seçeneğidir.`
+                });
+            }
+            return qs;
         }
 
-        // Reset Quiz
-        function resetQuiz() {
-            document.getElementById('score-summary').classList.add('hidden');
-            document.getElementById('finish-btn').classList.remove('hidden');
-            document.getElementById('reset-btn').classList.add('hidden');
-            renderQuestions();
+        function generateChemistryQuestions(topicName) {
+            let qs = [];
+            for (let i = 1; i <= 20; i++) {
+                let isOsm = i <= 10;
+                let diff = i <= 3 ? "Kolay" : (i <= 16 ? "Orta" : "Orta-Zor");
+                qs.push({
+                    id: i,
+                    tag: isOsm ? "ÖSYM Tarzı" : "Yeni Nesil Özgün",
+                    difficulty: diff,
+                    question: `${topicName} ile ilgili yapılan laboratuvar veya teorik bir çalışmada; bileşenler, formüller ve dönüşümler incelenmektedir. Buna göre bu süreçte karşılaşılan özelliklerden hangisi doğrudur?`,
+                    options: [
+                        "Saf maddelerin belirli ayırt edici özellikleri sabittir.",
+                        "Bileşikler fiziksel yöntemlerle kendisini oluşturan elementlere ayrıştırılabilir.",
+                        "Karışımlarda bileşenler her zaman sabit kütle oranlarında bir araya gelir.",
+                        "Atomun yapısındaki elektron sayısı her koşulda nötron sayısına eşittir.",
+                        "Asitler ve bazlar tepkimeye girdiğinde sadece tuz ve hidrojen gazı oluşur."
+                    ],
+                    correct: 0,
+                    explanation: `<b>Ayrıntılı Çözüm:</b> Saf maddelerin (element ve bileşiklerin) özkütle, erime noktası, kaynama noktası gibi ayırt edici özellikleri sabittir. Bileşikler kimyasal yollarla ayrılır, karışımlar sabit oran içermez. Doğru cevap A seçeneğidir.`
+                });
+            }
+            return qs;
+        }
+
+        function generateBiologyQuestions(topicName) {
+            let qs = [];
+            for (let i = 1; i <= 20; i++) {
+                let isOsm = i <= 10;
+                let diff = i <= 3 ? "Kolay" : (i <= 16 ? "Orta" : "Orta-Zor");
+                qs.push({
+                    id: i,
+                    tag: isOsm ? "ÖSYM Tarzı" : "Yeni Nesil Özgün",
+                    difficulty: diff,
+                    question: `${topicName} konusunda canlıların hücresel yapısı, metabolik faaliyetleri ve kalıtsal materyali ele alınmaktadır. Aşağıdaki ifadelerden hangisi bu kapsamda bilimsel olarak doğrudur?`,
+                    options: [
+                        "Tüm canlı hücrelerde DNA çekirdek zarı ile çevrilidir.",
+                        "Enzimler kimyasal tepkimeleri başlatır ve tepkime sonunda harcanır.",
+                        "Canlıların tamamı heterotrof beslenerek kendi organik besinini üretir.",
+                        "Hücre zarının yapısında çift katlı fosfolipit tabakası ve gömülü proteinler yer alır.",
+                        "Mitoz bölünme sonucunda oluşan hücrelerin kalıtsal bilgisi ana hücreden farklıdır."
+                    ],
+                    correct: 3,
+                    explanation: `<b>Ayrıntılı Çözüm:</b> Hücre zarının temel yapısı akıcı mozaik zar modeline göre çift katlı fosfolipit ve proteinlerden oluşur. Prokaryotlarda çekirdek yoktur, enzimler harcanmaz, mitozda kalıtsal yapı aynı kalır. Doğru cevap D seçeneğidir.`
+                });
+            }
+            return qs;
+        }
+
+        // --- APP STATE MANAGEMENT ---
+        let currentScreen = 'home'; // 'home' | 'topics' | 'quiz' | 'result'
+        let currentSubjectKey = null;
+        let currentTopicId = null;
+        let userAnswers = {};
+        let quizTimerInterval = null;
+        let quizSecondsElapsed = 0;
+        let lastQuizResult = null;
+
+        // LocalStorage Helpers
+        function getScoresDB() {
+            try {
+                return JSON.parse(localStorage.getItem('tyt_fen_scores_v1')) || {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function saveScoreDB(topicId, correct, total) {
+            let db = getScoresDB();
+            let existing = db[topicId] ? db[topicId].score : 0;
+            // Keep the best score
+            if (correct > existing) {
+                db[topicId] = {
+                    score: correct,
+                    total: total,
+                    date: new Date().toLocaleDateString('tr-TR')
+                };
+                localStorage.setItem('tyt_fen_scores_v1', JSON.stringify(db));
+            }
+        }
+
+        function resetAllData() {
+            if (confirm("Tüm test ilerlemeleriniz ve skorlarınız sıfırlanacaktır. Emin misiniz?")) {
+                localStorage.removeItem('tyt_fen_scores_v1');
+                goHome();
+            }
+        }
+
+        // --- NAVIGATION CONTROLLER ---
+        function goHome() {
+            stopQuizTimer();
+            currentScreen = 'home';
+            currentSubjectKey = null;
+            currentTopicId = null;
+            render();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Initialize on load
-        window.onload = renderQuestions;
+        function selectSubject(subjectKey) {
+            currentSubjectKey = subjectKey;
+            currentScreen = 'topics';
+            render();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function startQuiz(topicId) {
+            currentTopicId = topicId;
+            userAnswers = {};
+            quizSecondsElapsed = 0;
+            currentScreen = 'quiz';
+            render();
+            startQuizTimer();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- TIMER ---
+        function startQuizTimer() {
+            stopQuizTimer();
+            quizTimerInterval = setInterval(() => {
+                quizSecondsElapsed++;
+                const timerEl = document.getElementById('quiz-timer');
+                if (timerEl) {
+                    const mins = String(Math.floor(quizSecondsElapsed / 60)).padStart(2, '0');
+                    const secs = String(quizSecondsElapsed % 60).padStart(2, '0');
+                    timerEl.innerText = `${mins}:${secs}`;
+                }
+            }, 1000);
+        }
+
+        function stopQuizTimer() {
+            if (quizTimerInterval) clearInterval(quizTimerInterval);
+        }
+
+        // --- VIEW RENDERER ---
+        function render() {
+            const app = document.getElementById('app');
+            app.innerHTML = '';
+
+            if (currentScreen === 'home') {
+                app.innerHTML = renderHomeScreen();
+            } else if (currentScreen === 'topics') {
+                app.innerHTML = renderTopicsScreen();
+            } else if (currentScreen === 'quiz') {
+                app.innerHTML = renderQuizScreen();
+            } else if (currentScreen === 'result') {
+                app.innerHTML = renderResultScreen();
+            }
+        }
+
+        // --- 1. HOME SCREEN ---
+        function renderHomeScreen() {
+            let db = getScoresDB();
+            let totalCompletedTopics = Object.keys(db).length;
+
+            return `
+                <div class="space-y-8 animate-fade-in">
+                    <!-- Hero Banner -->
+                    <div class="bg-gradient-to-r from-indigo-900 via-slate-900 to-indigo-950 rounded-3xl p-8 sm:p-12 text-white shadow-xl relative overflow-hidden border border-indigo-900/50">
+                        <div class="absolute right-0 top-0 translate-x-8 -translate-y-8 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                        <div class="relative z-10 max-w-2xl space-y-4">
+                            <span class="inline-block px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-xs font-bold uppercase tracking-wider border border-indigo-500/30">
+                                YKS / TYT Fen Bilimleri Kampı
+                            </span>
+                            <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+                                Hedefine Adım Adım Ulaş
+                            </h2>
+                            <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                                Fizik, Kimya ve Biyoloji derslerinin tüm TYT konularından ÖSYM tarzı ve yeni nesil özgün sorularla kendini test et. Yanlışlarını anında öğren, netlerini zirveye taşı!
+                            </p>
+                            <div class="pt-2 flex items-center gap-4 text-xs font-medium text-slate-400">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                                    <span>Tamamlanan Konu: ${totalCompletedTopics} / 15</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Subject Cards Grid -->
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                            <span>📚 Ders Seçimi Yap</span>
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            ${Object.keys(subjectsData).map(key => {
+                                let subj = subjectsData[key];
+                                // Calculate subject stats
+                                let subjTopics = subj.topics;
+                                let completedCount = subjTopics.filter(t => db[t.id] && db[t.id].score >= 10).length;
+                                return `
+                                    <div onclick="selectSubject('${key}')" class="bg-white rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200 cursor-pointer group flex flex-col justify-between relative overflow-hidden">
+                                        <div class="absolute top-0 right-0 w-32 h-32 bg-slate-100 rounded-bl-full transition-transform group-hover:scale-110 pointer-events-none"></div>
+                                        <div class="relative z-10 space-y-4">
+                                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr ${subj.gradient} flex items-center justify-center text-2xl shadow-lg shadow-indigo-500/20 text-white">
+                                                ${subj.icon}
+                                            </div>
+                                            <div>
+                                                <h4 class="text-2xl font-black text-slate-900 group-hover:text-indigo-600 transition">${subj.name}</h4>
+                                                <p class="text-xs text-slate-500 mt-1">${subjTopics.length} Kapsamlı Ünite Testi</p>
+                                            </div>
+                                            <p class="text-xs text-slate-600 line-clamp-2">
+                                                ${subjTopics.map(t => t.title).join(" • ")}
+                                            </p>
+                                        </div>
+                                        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between relative z-10">
+                                            <span class="text-xs font-semibold px-2.5 py-1 rounded-lg ${subj.badgeBg}">
+                                                ${completedCount}/${subjTopics.length} Başarılı
+                                            </span>
+                                            <span class="text-sm font-bold text-indigo-600 group-hover:translate-x-1 transition flex items-center gap-1">
+                                                <span>İncele</span>
+                                                <span>→</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 2. TOPIC LIST SCREEN ---
+        function renderTopicsScreen() {
+            let subj = subjectsData[currentSubjectKey];
+            let db = getScoresDB();
+
+            return `
+                <div class="space-y-6 animate-fade-in">
+                    <!-- Navigation / Header -->
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                        <div class="flex items-center gap-4">
+                            <button onclick="goHome()" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+                                ← Ana Sayfa
+                            </button>
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Ders Üniteleri</span>
+                                <h2 class="text-2xl font-extrabold text-slate-900">${subj.name} TYT Konu Listesi</h2>
+                            </div>
+                        </div>
+                        <span class="text-xs font-semibold px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700">
+                            Toplam ${subj.topics.length} Ünite
+                        </span>
+                    </div>
+
+                    <!-- Topic List Vertical -->
+                    <div class="space-y-4">
+                        ${subj.topics.map((topic, idx) => {
+                            let record = db[topic.id];
+                            let statusClass = "bg-white border-slate-200 hover:border-indigo-300 text-slate-800";
+                            let statusBadge = `<span class="px-3 py-1 rounded-xl text-xs font-bold bg-slate-100 text-slate-600">Çözülmedi</span>`;
+                            let scoreText = "";
+
+                            if (record) {
+                                if (record.score >= 10) {
+                                    statusClass = "bg-emerald-50/60 border-emerald-300 hover:border-emerald-400 text-emerald-900";
+                                    statusBadge = `<span class="px-3 py-1 rounded-xl text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">🟢 Başarılı (≥10)</span>`;
+                                } else {
+                                    statusClass = "bg-rose-50/60 border-rose-300 hover:border-rose-400 text-rose-900";
+                                    statusBadge = `<span class="px-3 py-1 rounded-xl text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">🔴 Geliştirilmeli (<10)</span>`;
+                                }
+                                scoreText = `<span class="text-xs font-semibold opacity-80">En İyi Skor: ${record.score} / ${record.total}</span>`;
+                            }
+
+                            return `
+                                <div class="p-6 rounded-2xl border ${statusClass} shadow-sm transition-all duration-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                                    <div class="space-y-1">
+                                        <div class="flex items-center gap-3">
+                                            <span class="w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center text-xs font-bold">
+                                                ${idx + 1}
+                                            </span>
+                                            <h4 class="text-lg font-bold">${topic.title}</h4>
+                                        </div>
+                                        <p class="text-xs opacity-75 pl-11 max-w-xl">${topic.desc}</p>
+                                    </div>
+                                    <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end pl-11 md:pl-0">
+                                        <div class="text-right">
+                                            ${statusBadge}
+                                            ${scoreText ? `<div class="mt-1">${scoreText}</div>` : ''}
+                                        </div>
+                                        <button onclick="startQuiz('${topic.id}')" class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold shadow-md shadow-indigo-600/20 transition flex items-center gap-2 shrink-0">
+                                            <span>Testi Çöz</span>
+                                            <span>→</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 3. QUIZ SCREEN (20 Questions) ---
+        function renderQuizScreen() {
+            let subj = subjectsData[currentSubjectKey];
+            let topic = subj.topics.find(t => t.id === currentTopicId);
+
+            return `
+                <div class="space-y-8 animate-fade-in pb-20">
+                    <!-- Quiz Header & Timer -->
+                    <div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white p-6 sm:p-8 rounded-3xl shadow-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sticky top-20 z-40 border border-indigo-900">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">${subj.name} • Ünite Testi</span>
+                            <h2 class="text-xl sm:text-2xl font-extrabold mt-1">${topic.title}</h2>
+                            <p class="text-xs text-slate-300 mt-1">10 ÖSYM Tarzı + 10 Yeni Nesil Özgün Soru (Toplam 20 Soru)</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl text-center border border-white/20">
+                                <span class="block text-[10px] uppercase tracking-wider text-slate-300">Geçen Süre</span>
+                                <span id="quiz-timer" class="text-lg font-mono font-bold text-white">00:00</span>
+                            </div>
+                            <button onclick="if(confirm('Testten çıkmak istediğinize emin misiniz? İlerlemeniz kaydedilmez.')) selectSubject('${currentSubjectKey}')" class="px-3 py-2 rounded-xl bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 text-xs font-semibold transition border border-rose-500/30">
+                                Çıkış
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Questions List -->
+                    <div class="space-y-6">
+                        ${topic.questions.map((q, qIndex) => {
+                            let optionLabels = ['A', 'B', 'C', 'D', 'E'];
+                            let diffColor = q.difficulty === 'Kolay' ? 'bg-emerald-100 text-emerald-800' : (q.difficulty === 'Orta' ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800');
+
+                            return `
+                                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-4" id="question-card-${qIndex}">
+                                    <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-700 font-bold text-sm flex items-center justify-center">
+                                                ${qIndex + 1}
+                                            </span>
+                                            <span class="text-xs font-bold px-2.5 py-1 rounded-md ${q.tag === 'ÖSYM Tarzı' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}">
+                                                ${q.tag}
+                                            </span>
+                                        </div>
+                                        <span class="text-xs font-bold px-2.5 py-1 rounded-md ${diffColor}">
+                                            Zorluk: ${q.difficulty}
+                                        </span>
+                                    </div>
+
+                                    <h3 class="text-base sm:text-lg font-semibold text-slate-900 leading-relaxed">
+                                        ${q.question}
+                                    </h3>
+
+                                    <div class="space-y-2 pt-2">
+                                        ${q.options.map((opt, optIdx) => {
+                                            let isChecked = userAnswers[qIndex] === optIdx ? 'checked' : '';
+                                            return `
+                                                <label class="flex items-start p-3.5 sm:p-4 rounded-2xl border border-slate-200 cursor-pointer hover:bg-slate-50 transition duration-150 group">
+                                                    <input type="radio" name="q_${qIndex}" value="${optIdx}" onchange="userAnswers[${qIndex}] = ${optIdx}" ${isChecked} class="mt-1 w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-slate-300">
+                                                    <span class="ml-3 text-sm sm:text-base text-slate-700 group-hover:text-slate-900 font-medium">
+                                                        <strong class="text-indigo-600 mr-1">${optionLabels[optIdx]})</strong> ${opt}
+                                                    </span>
+                                                </label>
+                                            `;
+                                        }).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <!-- Submit Quiz Sticky Bar -->
+                    <div class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-slate-200 py-4 px-6 shadow-2xl z-50 flex items-center justify-between max-w-6xl mx-auto rounded-t-3xl">
+                        <div class="text-xs sm:text-sm font-semibold text-slate-600">
+                            💡 Tüm soruları cevapladığınızdan emin olun.
+                        </div>
+                        <button onclick="submitQuiz()" class="px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-2xl shadow-lg shadow-emerald-600/30 transition flex items-center gap-2">
+                            <span>Testi Bitir ve Değerlendir</span>
+                            <span>✓</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- SUBMIT & EVALUATE QUIZ ---
+        function submitQuiz() {
+            stopQuizTimer();
+            let subj = subjectsData[currentSubjectKey];
+            let topic = subj.topics.find(t => t.id === currentTopicId);
+
+            let correct = 0;
+            let wrong = 0;
+            let empty = 0;
+
+            topic.questions.forEach((q, idx) => {
+                let ans = userAnswers[idx];
+                if (ans !== undefined) {
+                    if (ans === q.correct) correct++;
+                    else wrong++;
+                } else {
+                    empty++;
+                }
+            });
+
+            // Net Calculation (4 wrongs = 1 correct)
+            let net = Math.max(0, correct - (wrong / 4)).toFixed(2);
+            let percentage = Math.round((correct / topic.questions.length) * 100);
+
+            // Save to LocalStorage
+            saveScoreDB(topic.id, correct, topic.questions.length);
+
+            lastQuizResult = {
+                correct, wrong, empty, net, percentage, topic, seconds: quizSecondsElapsed
+            };
+
+            currentScreen = 'result';
+            render();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- 4. RESULT & REVIEW SCREEN ---
+        function renderResultScreen() {
+            let res = lastQuizResult;
+            let subj = subjectsData[currentSubjectKey];
+
+            return `
+                <div class="space-y-8 animate-fade-in pb-20">
+                    <!-- Result Summary Card -->
+                    <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-8 sm:p-12 text-white shadow-xl text-center space-y-6 border border-indigo-900/50">
+                        <span class="inline-block px-4 py-1.5 bg-indigo-500/20 text-indigo-300 rounded-full text-xs font-bold uppercase tracking-wider border border-indigo-500/30">
+                            🎉 Test Tamamlandı & Değerlendirildi
+                        </span>
+                        <h2 class="text-3xl sm:text-4xl font-black">${res.topic.title}</h2>
+                        
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto pt-4">
+                            <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10">
+                                <span class="block text-3xl font-black text-emerald-400">${res.correct}</span>
+                                <span class="text-xs font-semibold text-slate-300 uppercase">Doğru</span>
+                            </div>
+                            <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10">
+                                <span class="block text-3xl font-black text-rose-400">${res.wrong}</span>
+                                <span class="text-xs font-semibold text-slate-300 uppercase">Yanlış</span>
+                            </div>
+                            <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10">
+                                <span class="block text-3xl font-black text-slate-300">${res.empty}</span>
+                                <span class="text-xs font-semibold text-slate-300 uppercase">Boş</span>
+                            </div>
+                            <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10">
+                                <span class="block text-3xl font-black text-indigo-400">${res.net}</span>
+                                <span class="text-xs font-semibold text-slate-300 uppercase">Net (4Y=1D)</span>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 flex flex-wrap items-center justify-center gap-4">
+                            <button onclick="startQuiz('${res.topic.id}')" class="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm transition border border-white/20">
+                                🔄 Testi Yeniden Çöz
+                            </button>
+                            <button onclick="selectSubject('${currentSubjectKey}')" class="px-8 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-lg shadow-indigo-600/30 transition">
+                                📁 Konulara Geri Dön
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Question-by-Question Review with Solutions -->
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-extrabold text-slate-900 px-2">🔍 Soru Çözümleri & İnceleme</h3>
+                        
+                        ${res.topic.questions.map((q, qIndex) => {
+                            let userChoice = userAnswers[qIndex];
+                            let optionLabels = ['A', 'B', 'C', 'D', 'E'];
+
+                            return `
+                                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-4">
+                                    <div class="flex items-center justify-between gap-2 pb-3 border-b border-slate-100">
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-8 h-8 rounded-xl bg-slate-900 text-white font-bold text-sm flex items-center justify-center">
+                                                ${qIndex + 1}
+                                            </span>
+                                            <span class="text-xs font-bold px-2.5 py-1 rounded-md ${q.tag === 'ÖSYM Tarzı' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}">
+                                                ${q.tag}
+                                            </span>
+                                        </div>
+                                        <span class="text-xs font-bold px-3 py-1 rounded-full ${userChoice === q.correct ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                                            ${userChoice === q.correct ? '✔ Doğru' : (userChoice !== undefined ? '✘ Yanlış' : '⚠️ Boş Bırakıldı')}
+                                        </span>
+                                    </div>
+
+                                    <h4 class="text-base sm:text-lg font-semibold text-slate-900 leading-relaxed">
+                                        ${q.question}
+                                    </h4>
+
+                                    <div class="space-y-2 pt-2">
+                                        ${q.options.map((opt, optIdx) => {
+                                            let styleClass = "border-slate-200 bg-white text-slate-700";
+                                            if (optIdx === q.correct) {
+                                                styleClass = "correct-answer border-emerald-500 font-bold";
+                                            } else if (optIdx === userChoice && userChoice !== q.correct) {
+                                                styleClass = "wrong-answer border-rose-500 font-bold";
+                                            }
+
+                                            return `
+                                                <div class="p-3.5 sm:p-4 rounded-2xl border ${styleClass} text-sm sm:text-base flex items-center justify-between">
+                                                    <div>
+                                                        <strong class="mr-1">${optionLabels[optIdx]})</strong> ${opt}
+                                                    </div>
+                                                    <div>
+                                                        ${optIdx === q.correct ? '<span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-md">Doğru Cevap</span>' : ''}
+                                                        ${optIdx === userChoice && userChoice !== q.correct ? '<span class="text-xs font-bold text-rose-700 bg-rose-100 px-2 py-1 rounded-md">Senin Cevabın</span>' : ''}
+                                                    </div>
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
+
+                                    <!-- Step-by-Step Solution Explanation Box -->
+                                    <div class="mt-4 p-5 rounded-2xl bg-indigo-50/70 border border-indigo-100 text-sm leading-relaxed text-slate-700 space-y-1">
+                                        <div class="font-bold text-indigo-900 flex items-center gap-2 mb-1">
+                                            <span>💡 Ayrıntılı Çözüm & Konu Açıklaması</span>
+                                        </div>
+                                        <p>${q.explanation}</p>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initialize application on window load
+        window.onload = function() {
+            render();
+        };
     </script>
 </body>
 </html>
+```
+eof

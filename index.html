@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TYT Kimya - Kimya Bilimi Testi</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .correct-answer {
+            background-color: #d1fae5 !important;
+            border-color: #10b981 !important;
+            color: #065f46 !important;
+        }
+        .wrong-answer {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #991b1b !important;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+
+    <div class="max-w-4xl mx-auto space-y-8">
+        
+        <!-- Header Section -->
+        <header class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <span class="inline-block px-3 py-1 bg-blue-500/30 text-blue-100 rounded-full text-xs font-semibold tracking-wider uppercase mb-2">TYT Kimya Kampı</span>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold">1. Konu: Kimya Bilimi Testi</h1>
+                    <p class="text-blue-100 text-sm mt-1">10 ÖSYM Tarzı + 10 Yeni Nesil Özgün Soru (Toplam 20 Soru)</p>
+                </div>
+                <div id="timer-box" class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl text-center border border-white/20">
+                    <span class="block text-xs uppercase tracking-wider text-blue-200">Geçen Süre</span>
+                    <span id="timer" class="text-xl font-mono font-bold">00:00</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Summary Score Card (Hidden initially) -->
+        <div id="score-summary" class="hidden bg-white rounded-2xl p-6 shadow-lg border border-slate-200">
+            <h2 class="text-xl font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100 flex items-center justify-between">
+                <span>📊 Test Sonuç Analizi</span>
+                <span id="score-percentage" class="text-sm font-semibold px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full"></span>
+            </h2>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                    <span class="block text-2xl font-black text-emerald-600" id="correct-count">0</span>
+                    <span class="text-xs font-medium text-emerald-800 uppercase">Doğru</span>
+                </div>
+                <div class="bg-rose-50 p-4 rounded-xl border border-rose-100">
+                    <span class="block text-2xl font-black text-rose-600" id="wrong-count">0</span>
+                    <span class="text-xs font-medium text-rose-800 uppercase">Yanlış</span>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <span class="block text-2xl font-black text-slate-600" id="empty-count">0</span>
+                    <span class="text-xs font-medium text-slate-600 uppercase">Boş</span>
+                </div>
+                <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                    <span class="block text-2xl font-black text-indigo-600" id="net-score">0</span>
+                    <span class="text-xs font-medium text-indigo-800 uppercase">Net (4 Yanlış = 1 Doğru)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Questions Container -->
+        <form id="quiz-form" class="space-y-6">
+            <div id="questions-container" class="space-y-6">
+                <!-- Questions populated by JS -->
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="pt-6 border-t border-slate-200 flex flex-col sm:flex-row gap-4 justify-between items-center">
+                <button type="button" id="finish-btn" onclick="submitQuiz()" class="w-full sm:w-auto px-8 py-4 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/30 transition duration-200 flex items-center justify-center gap-2">
+                    <span>Testi Bitir ve Değerlendir</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </button>
+                <button type="button" id="reset-btn" onclick="resetQuiz()" class="hidden w-full sm:w-auto px-8 py-4 bg-slate-200 hover:bg-slate-300 active:bg-slate-400 text-slate-700 font-bold rounded-xl transition duration-200">
+                    Testi Yeniden Çöz
+                </button>
+            </div>
+        </form>
+
+    </div>
+
+    <script>
+        // Question Data Array
+        const questions = [
+            // Section 1: ÖSYM Style
+            {
+                id: 1,
+                tag: "ÖSYM Tarzı",
+                question: "Aşağıdakilerden hangisi simyacılar döneminde keşfedilip günümüzde de endüstriyel veya tıbbi amaçlarla kullanılan maddelerden biri <b>değildir</b>?",
+                options: [
+                    "Göztaşı (CuSO₄)",
+                    "Tuz ruhu (HCl)",
+                    "Şap (KAl(SO₄)₂·12H₂O)",
+                    "Plastik polimerler",
+                    "Zaç yağı (H₂SO₄)"
+                ],
+                correct: 3, // D
+                explanation: "Plastik ve polimer malzemeler modern kimya sanayisi ve 20. yüzyıl teknolojisinin ürünleridir. Simyacılar döneminde bilinmiyorlardı."
+            },
+            {
+                id: 2,
+                tag: "ÖSYM Tarzı",
+                question: "Simya dönemi ile ilgili aşağıdaki ifadelerden hangisi <b>yanlıştır</b>?",
+                options: [
+                    "Teorik temelleri olmayan, deneme-yanılma yoluyla yapılan çalışmalar bütünüdür.",
+                    "Temel amaçlardan biri ölümsüzlük iksirini (ab-ı hayat) bulmaktır.",
+                    "Çalışmaların tamamı sistematik bilgi birikimi sağladığı için kimya bilimine doğrudan dönüşmüştür.",
+                    "Mürekkep, cam ve esans gibi maddelerin eldesi simya döneminde gerçekleştirilmiştir.",
+                    "Metalleri altına dönüştürme (felsefe taşı) fikri yaygındır."
+                ],
+                correct: 2, // C
+                explanation: "Simyada 'sistematik bilgi birikimi' yoktur. Çalışmalar rastgele, mistik ve deneme-yanılmaya dayandığı için simya bir bilim dalı kabul edilmez."
+            },
+            {
+                id: 3,
+                tag: "ÖSYM Tarzı",
+                question: "Aşağıdaki laboratuvar malzemelerinden hangisinin adı veya kullanım amacı <b>yanlış</b> verilmiştir?",
+                options: [
+                    "Erlenmayer - Titrasyon ve çözelti saklama",
+                    "Büret - Sıvı hacimlerini hassas bir şekilde ölçme ve damlatma",
+                    "Baget - Sıvıları karıştırmak ve aktarmaya yardımcı olmak",
+                    "Balon joje - Belli derişimde hassas çözelti hazırlama",
+                    "Ayırma hunisi - Katı-sıvı heterojen karışımları süzme yoluyla ayırma"
+                ],
+                correct: 4, // E
+                explanation: "Ayırma hunisi katı-sıvı değil, birbiri içinde çözünmeyen 'sıvı-sıvı' (örneğin zeytinyağı-su) heterojen karışımlarını özkütle farkıyla ayırmada kullanılır."
+            },
+            {
+                id: 4,
+                tag: "ÖSYM Tarzı",
+                question: "Aşağıdaki maddelerden hangisinin karşısında verilen yaygın adı veya formülü <b>yanlış</b> eşleştirilmiştir?",
+                options: [
+                    "Tuz Ruhu - HCl",
+                    "Kezzap - HNO₃",
+                    "Sirke Asidi - CH₃COOH",
+                    "Yemek Sodası - NaOH",
+                    "Kireç Taşı - CaCO₃"
+                ],
+                correct: 3, // D
+                explanation: "Yemek sodasının formülü NaHCO₃ (Sodyum bikarbonat) şeklindedir. NaOH ise Sud Kostik (Sodyum hidroksit) olarak bilinir."
+            },
+            {
+                id: 5,
+                tag: "ÖSYM Tarzı",
+                question: "Kimya disiplinleri ile ilgili aşağıdaki eşleştirmelerden hangisi <b>yanlış</b> verilmiştir?",
+                options: [
+                    "Organik Kimya: Petrokimya ve karbon temelli bileşiklerin incelenmesi",
+                    "Analitik Kimya: Maddenin bileşimindeki türlerin nicel ve nitel analizi",
+                    "Fizikokimya: Kimyasal tepkimelerdeki ısı, iş ve enerji değişimleri",
+                    "Biyokimya: Canlı organizmalardaki kimyasal süreçlerin incelenmesi",
+                    "Polimer Kimyası: Minerallerin, cevherlerin ve kayaçların yapısı"
+                ],
+                correct: 4, // E
+                explanation: "Mineraller, cevherler ve anorganik maddeler 'Anorganik Kimya'nın ilgi alanıdır. Polimer kimyası plastik, naylon gibi çoklu monomer yapılarını inceler."
+            },
+            {
+                id: 6,
+                tag: "ÖSYM Tarzı",
+                question: "Kimya laboratuvarında çalışırken uyulması gereken kurallarla ilgili;<br>I. Asit üzerine su eklenmemeli, su üzerine yavaşça asit eklenmelidir.<br>II. Cilde asit döküldüğünde hemen bol su ile yıkanmalıdır.<br>III. Laboratuvarda yiyecek ve içecek tüketilebilir.<br>yargılarından hangileri <b>doğrudur</b>?",
+                options: [
+                    "Yalnız I",
+                    "Yalnız II",
+                    "I ve II",
+                    "II ve III",
+                    "I, II ve III"
+                ],
+                correct: 2, // C
+                explanation: "Asit üzerine su dökülürse aşırı ısı açığa çıkar ve sıçrama yapar (I doğru). Kimyasal temasta bol su yıkama esastır (II doğru). Laboratuvarda yiyecek/içecek tüketmek kesinlikle yasaktır (III yanlış)."
+            },
+            {
+                id: 7,
+                tag: "ÖSYM Tarzı",
+                question: "Aşağıdaki elementlerden hangisinin sembolü kimya literatüründe <b>yanlış</b> verilmiştir?",
+                options: [
+                    "Sodyum → Na",
+                    "Potasyum → P",
+                    "Bakır → Cu",
+                    "Cıva → Hg",
+                    "Demir → Fe"
+                ],
+                correct: 1, // B
+                explanation: "Potasyumun sembolü 'K' harfidir. 'P' sembolü ise Fosfor elementine aittir."
+            },
+            {
+                id: 8,
+                tag: "ÖSYM Tarzı",
+                question: "Aşağıdaki maddelerden hangisi hem simya döneminde keşfedilmiş hem de insan sağlığı için kandaki hemoglobinin yapısına katılan hayati bir elementtir?",
+                options: [
+                    "Plastik",
+                    "Su (H₂O)",
+                    "Demir (Fe)",
+                    "Teflon",
+                    "Naylon"
+                ],
+                correct: 2, // C
+                explanation: "Demir (Fe), antik çağlardan/simyadan beri işlenen bir metaldir ve kanda oksijen taşıyan hemoglobinin temel yapı taşıdır."
+            },
+            {
+                id: 9,
+                tag: "ÖSYM Tarzı",
+                question: "Aşağıdaki çalışma alanlarından hangisi kimya biliminin doğrudan katkı sağladığı sektörler arasında <b>yer almaz</b>?",
+                options: [
+                    "İlaç üretimi ve teşhisi",
+                    "Tarımda verim artıran gübre üretimi",
+                    "Atık suların arıtılması",
+                    "Gök cisimlerinin yörünge hesaplamaları",
+                    "Tekstil boyaları ve elyaf eldesi"
+                ],
+                correct: 3, // D
+                explanation: "Gök cisimlerinin yörünge ve hareket hesaplamaları astronomi ve fiziğin çalışma alanıdır."
+            },
+            {
+                id: 10,
+                tag: "ÖSYM Tarzı",
+                question: "Simyadan modern kimyaya geçişte; 'Element, kendinden daha basit maddelere ayrılamayan saf maddedir' tanımını yaparak bilinen anlamda ilk modern element tanımını kazandıran bilim insanı kimdir?",
+                options: [
+                    "Robert Boyle",
+                    "Antoine Lavoisier",
+                    "Cabir bin Hayyan",
+                    "Aristo",
+                    "Democritus"
+                ],
+                correct: 0, // A
+                explanation: "Robert Boyle, 'Kuştukçu Kimyager' (The Sceptical Chymist) eserinde Aristo'nun 4 element kuramını yıkarak modern element tanımının temellerini atmıştır."
+            },
+            
+            // Section 2: New Generation / Original
+            {
+                id: 11,
+                tag: "Yeni Nesil",
+                question: "Bir kimya laboratuvarındaki 4 farklı şişe üzerinde şu uyarı sembolleri vardır:<br>• A Şişesi: Alev sembolü (Yanıcı)<br>• B Şişesi: Aşınmış el ve metal sembolü (Aşındırıcı/Korozif)<br>• C Şişesi: Patlayan bomba sembolü (Patlayıcı)<br>• D Şişesi: Ölü balık ve ağaç sembolü (Çevreye zararlı)<br>Bu kimyasallarla çalışılırken yapılan hangi işlem <b>güvenlik kurallarına aykırıdır</b>?",
+                options: [
+                    "A şişesini çıplak alevden uzak tutmak",
+                    "B şişesini kullanırken eldiven ve gözlük takmak",
+                    "C şişesini ısı ve darbeden korumak",
+                    "D şişesiyle iş bittiğinde kalıntıyı lavaboya döküp bol suyla akıtmak",
+                    "Bütün işlemleri çeker ocak altında gerçekleştirmek"
+                ],
+                correct: 3, // D
+                explanation: "Çevreye zararlı maddeler (D şişesi) asla lavaboya dökülmez! Ağır metaller su kaynaklarını ve canlı hayatını zehirler; özel atık kaplarında toplanmalıdır."
+            },
+            {
+                id: 12,
+                tag: "Yeni Nesil",
+                question: "Gündelik hayatta kullanılan;<br>I. Sönmüş kireç [Ca(OH)₂]<br>II. Tuz ruhu [HCl]<br>III. Kezzap [HNO₃]<br>maddeleri için aşağıdakilerden hangisi <b>ortak bir özelliktir</b>?",
+                options: [
+                    "Sulu çözeltilerinin elektrik akımını iletmesi",
+                    "Oda koşullarında katı halde bulunmaları",
+                    "Yapılarında hidrojen içermelerine rağmen asidik olmamaları",
+                    "Yalnızca modern kimya çağında sentezlenmiş olmaları",
+                    "Doğrudan gıda katkı maddesi olarak kullanılmaları"
+                ],
+                correct: 0, // A
+                explanation: "Ca(OH)₂ baz; HCl ve HNO₃ ise asittir. Asit ve bazların sulu çözeltileri iyon barındırdığı için elektriği iletir (elektrolittir)."
+            },
+            {
+                id: 13,
+                tag: "Yeni Nesil",
+                question: "Ev temizliği yapan bir kişinin Çamaşır Suyu (NaOCl) ile Tuz Ruhunu (HCl) karıştırması sonucu zehirli Klor gazı (Cl₂) açığa çıkmış ve zehirlenme vakası yaşanmıştır.<br>Bu tepkimeyi ve oluşan zararlı gaz bileşimlerini inceleyen alt disiplin aşağıdakilerden hangisidir?",
+                options: [
+                    "Biyokimya",
+                    "Analitik Kimya",
+                    "Anorganik Kimya",
+                    "Polimer Kimyası",
+                    "Fizikokimya"
+                ],
+                correct: 2, // C
+                explanation: "Asitler, bazlar, tuzlar, gazlar ve organik olmayan bileşiklerin tepkimelerini Anorganik (İnorganik) Kimya inceler."
+            },
+            {
+                id: 14,
+                tag: "Yeni Nesil",
+                question: "Bir araştırmacı laboratuvarda şu adımları izliyor:<br>1. Adım: Maddelerin kütlelerini hassas terazi ile ölçüyor.<br>2. Adım: Tepkime esnasında açığa çıkan ısı ve sıcaklık değişimini kaydediyor.<br>3. Adım: Ürünün saflık derecesini yüzdesel olarak hesaplıyor.<br>Bu adımlarla ilgili eşleştirilen kimya disiplinleri hangisinde <b>doğru verilmiştir</b>?",
+                options: [
+                    "1: Analitik Kimya - 2: Fizikokimya - 3: Analitik Kimya",
+                    "1: Biyokimya - 2: Organik Kimya - 3: Polimer Kimyası",
+                    "1: Fizikokimya - 2: Analitik Kimya - 3: Anorganik Kimya",
+                    "1: Analitik Kimya - 2: Biyokimya - 3: Fizikokimya",
+                    "1: Organik Kimya - 2: Fizikokimya - 3: Biyokimya"
+                ],
+                correct: 0, // A
+                explanation: "Kütle ve miktar ölçümü (1) Analitik, iş/enerji/ısı takibi (2) Fizikokimya, saflık ve miktar tayini (3) yine Analitik kimya alanına girer."
+            },
+            {
+                id: 15,
+                tag: "Yeni Nesil",
+                question: "• Ebû Bekir er-Râzî: Karıncaları damıtarak formik asidi bulmuş, kroze ve fırınları geliştirmiştir.<br>• Cabir bin Hayyan: İmbik cihazını tasarlamış, kezzap ve zaç yağını keşfetmiştir.<br>• Antoine Lavoisier: Kütlenin Korunumu Kanunu'nu bulmuştur.<br>Bu bilim insanlarının ortak yönü aşağıdakilerden hangisidir?",
+                options: [
+                    "Hepsının modern atom teorisini tamamlamış olması",
+                    "Deney araç-gereçleri ve nicel/nitel yöntemlerle kimya bilimine katkı sağlamaları",
+                    "Periyodik cetveli günümüzdeki haline getirmeleri",
+                    "Simya döneminde hiçbir çalışma yapmamış olmaları",
+                    "Çalışmalarını sadece tıp alanıyla sınırlı tutmaları"
+                ],
+                correct: 1, // B
+                explanation: "İmbik, fırın, damıtma gibi yöntemler ve Lavoisier'nin terazi kullanımı (nicel gözlem) deneme-yanılmadan bilimsel kimyaya geçişi sağlayan ortak katkılardır."
+            },
+            {
+                id: 16,
+                tag: "Yeni Nesil",
+                question: "Bir öğrenci, bir sıvının kaynama esnasındaki sıcaklık değişimini grafik haline getirmek istiyor.<br>Bu deney seti kurulurken aşağıdaki malzemelerden hangisine <b>ihtiyaç duyulmaz</b>?",
+                options: [
+                    "Sıvıyı ısıtmak için İspirto Ocağı",
+                    "Sıcaklığı ölçmek için Termometre",
+                    "Sıvıyı içine koymak için Beherglas",
+                    "Sıvıları özkütle farkıyla ayırmak için Ayırma Hunisi",
+                    "Isıyı eşit yaymak için Sacayak ve Tel Gazlı Bez"
+                ],
+                correct: 3, // D
+                explanation: "Ayırma hunisi heterojen sıvı-sıvı karışımları ayırmak içindir. Tek bir sıvının kaynama sıcaklığını ölçerken ayırma hunisi kullanılmaz."
+            },
+            {
+                id: 17,
+                tag: "Yeni Nesil",
+                question: "Bir adli tıp uzmanı, olay yerinden alınan kan örneğindeki zehirli ağır metallerin (Pb, Hg) miktarını ve türünü belirlemek istemektedir.<br>Adli tıp uzmanı kimyanın hangi alt disiplin yönteminden yararlanmalıdır?",
+                options: [
+                    "Polimer Kimyası",
+                    "Analitik Kimya",
+                    "Fizikokimya",
+                    "Petrokimya",
+                    "Organik Kimya"
+                ],
+                correct: 1, // B
+                explanation: "Bir numunede 'Ne var?' (Nitel) ve 'Ne kadar var?' (Nicel) sorularına cevap arayan disiplin Analitik Kimyadır."
+            },
+            {
+                id: 18,
+                tag: "Yeni Nesil",
+                question: "Laboratuvarda bulunan Derişik Sülfürik Asit ($H_2SO_4$) şişesinin üzerine yapıştırılacak güvenlik etiketinde aşağıdaki sembollerden hangilerinin bulunması beklenir?<br>I. Korozif / Aşındırıcı (El ve metal simgesi)<br>II. Toksik / Zehirli (Kuru kafa simgesi)<br>III. Radyoaktif (Radyasyon simgesi)",
+                options: [
+                    "Yalnız I",
+                    "Yalnız II",
+                    "I ve II",
+                    "II ve III",
+                    "I, II ve III"
+                ],
+                correct: 2, // C
+                explanation: "Derişik sülfürik asit hem cildi ve maddeleri yakıp aşındırır (Korozif) hem de solunması/yutulması zehirlidir (Toksik). Ancak radyoaktif bir madde değildir."
+            },
+            {
+                id: 19,
+                tag: "Yeni Nesil",
+                question: "18. yüzyıla kadar nesnelerin yanması 'Flogiston (Ateş Ruhu)' teorisi ile açıklanıyordu. Bu teoriye göre yanan maddeler dışarıya flogiston salıyordu. Ancak Lavoisier, hassas terazi kullanarak yaptığı deneyde yanan maddenin kütlesinin azalmak yerine havadaki oksijenle birleşerek arttığını kanıtladı ve Flogiston teorisini çürüttü.<br>Bu durum bilimsel bilgi hakkında aşağıdakilerden hangisini kanıtlar?",
+                options: [
+                    "Bilimsel bilginin mutlak olduğu ve asla değişmeyeceği",
+                    "Teorilerin nicel deneysel kanıtlarla sınanarak güncellenebileceği veya çürütülebileceği",
+                    "Simyacıların tüm teorilerinin doğru kabul edilmesi gerektiği",
+                    "Deneylerde terazi kullanımının önemsiz olduğu",
+                    "Yanma olayının fiziksel bir hal değişiminden ibaret olduğu"
+                ],
+                correct: 1, // B
+                explanation: "Bilimsel bilgi dogmatik değildir. Terazi kullanımı gibi nicel ve deneysel kanıtlar, yanlış teorileri (Flogiston gibi) çürütüp yerine doğrusunu koyar."
+            },
+            {
+                id: 20,
+                tag: "Yeni Nesil",
+                question: "Aşağıda günlük hayatta karşılaşılan elementler ve kullanım alanları eşleştirilmiştir:<br>• I. Cıva (Hg) → Termometreler ve barometreler<br>• II. Klor (Cl) → Şebeke sularının dezenfeksiyonu<br>• III. Helyum (He) → Zeplin ve uçan balonların şişirilmesi<br>Bu eşleştirmelerden hangileri <b>doğrudur</b>?",
+                options: [
+                    "Yalnız I",
+                    "I ve II",
+                    "I ve III",
+                    "II ve III",
+                    "I, II ve III"
+                ],
+                correct: 4, // E
+                explanation: "Cıva sıvı metal olup termometrede kullanılır. Klor mikropları öldürür. Helyum ise havadan hafif ve yanıcı olmayan bir soy gazdır; balonlarda kullanılır."
+            }
+        ];
+
+        let timerSeconds = 0;
+        let timerInterval = null;
+
+        // Render Questions
+        function renderQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+
+            questions.forEach((q, index) => {
+                const qCard = document.createElement('div');
+                qCard.className = "bg-white rounded-2xl p-6 shadow-sm border border-slate-200 transition-all duration-200";
+                qCard.id = `q-card-${index}`;
+
+                let optionsHTML = '';
+                const optionLabels = ['A', 'B', 'C', 'D', 'E'];
+
+                q.options.forEach((opt, optIndex) => {
+                    optionsHTML += `
+                        <label id="opt-label-${index}-${optIndex}" class="flex items-start p-3 sm:p-4 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50 transition duration-150 group">
+                            <input type="radio" name="question-${index}" value="${optIndex}" class="mt-1 w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-slate-300">
+                            <span class="ml-3 text-sm sm:text-base text-slate-700 group-hover:text-slate-900 font-medium">
+                                <strong class="text-slate-400 mr-1">${optionLabels[optIndex]})</strong> ${opt}
+                            </span>
+                        </label>
+                    `;
+                });
+
+                qCard.innerHTML = `
+                    <div class="flex items-center justify-between gap-2 mb-3">
+                        <span class="text-xs font-bold px-2.5 py-1 rounded-md ${q.tag === 'ÖSYM Tarzı' ? 'bg-amber-100 text-amber-800' : 'bg-purple-100 text-purple-800'}">
+                            ${q.tag}
+                        </span>
+                        <span class="text-xs font-semibold text-slate-400">Soru ${index + 1} / 20</span>
+                    </div>
+                    <h3 class="text-base sm:text-lg font-semibold text-slate-900 mb-4 leading-relaxed">
+                        ${q.question}
+                    </h3>
+                    <div class="space-y-2">
+                        ${optionsHTML}
+                    </div>
+                    <!-- Detailed Explanation Box (Hidden by default) -->
+                    <div id="explanation-${index}" class="hidden mt-4 p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm leading-relaxed">
+                        <div class="font-bold text-slate-900 mb-1 flex items-center gap-2">
+                            <span>💡 Soru Çözümü & Açıklama</span>
+                        </div>
+                        <p class="text-slate-600">${q.explanation}</p>
+                    </div>
+                `;
+                container.appendChild(qCard);
+            });
+
+            startTimer();
+        }
+
+        // Timer Functions
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerSeconds = 0;
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                const mins = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+                const secs = String(timerSeconds % 60).padStart(2, '0');
+                document.getElementById('timer').innerText = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        // Submit and Grade Quiz
+        function submitQuiz() {
+            stopTimer();
+
+            let correctCount = 0;
+            let wrongCount = 0;
+            let emptyCount = 0;
+
+            questions.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="question-${index}"]:checked`);
+                const qCard = document.getElementById(`q-card-${index}`);
+                const explanationBox = document.getElementById(`explanation-${index}`);
+
+                // Disable all radio inputs
+                const allRadios = document.querySelectorAll(`input[name="question-${index}"]`);
+                allRadios.forEach(radio => radio.disabled = true);
+
+                // Reveal explanation
+                explanationBox.classList.remove('hidden');
+
+                // Highlight Correct Option always
+                const correctLabel = document.getElementById(`opt-label-${index}-${q.correct}`);
+                correctLabel.classList.add('correct-answer');
+
+                if (selectedOption) {
+                    const userChoice = parseInt(selectedOption.value);
+                    if (userChoice === q.correct) {
+                        correctCount++;
+                    } else {
+                        wrongCount++;
+                        // Highlight Incorrect Choice in Red
+                        const wrongLabel = document.getElementById(`opt-label-${index}-${userChoice}`);
+                        wrongLabel.classList.add('wrong-answer');
+                    }
+                } else {
+                    emptyCount++;
+                    qCard.classList.add('border-amber-300', 'bg-amber-50/20');
+                }
+            });
+
+            // Calculate Net Score (4 Wrongs cancel 1 Correct)
+            const net = Math.max(0, (correctCount - (wrongCount / 4))).toFixed(2);
+            const percentage = Math.round((correctCount / questions.length) * 100);
+
+            // Display Score Summary
+            document.getElementById('correct-count').innerText = correctCount;
+            document.getElementById('wrong-count').innerText = wrongCount;
+            document.getElementById('empty-count').innerText = emptyCount;
+            document.getElementById('net-score').innerText = net;
+            document.getElementById('score-percentage').innerText = `%${percentage} Başarı`;
+
+            document.getElementById('score-summary').classList.remove('hidden');
+
+            // Scroll to summary
+            document.getElementById('score-summary').scrollIntoView({ behavior: 'smooth' });
+
+            // Toggle Buttons
+            document.getElementById('finish-btn').classList.add('hidden');
+            document.getElementById('reset-btn').classList.remove('hidden');
+        }
+
+        // Reset Quiz
+        function resetQuiz() {
+            document.getElementById('score-summary').classList.add('hidden');
+            document.getElementById('finish-btn').classList.remove('hidden');
+            document.getElementById('reset-btn').classList.add('hidden');
+            renderQuestions();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initialize on load
+        window.onload = renderQuestions;
+    </script>
+</body>
+</html>
